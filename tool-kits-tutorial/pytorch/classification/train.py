@@ -29,5 +29,7 @@ for t in range(100):
     plt.text(1.5, -4, 'Accuracy=%.2f' % accuracy, fontdict={'size': 20, 'color': 'red'})
     plt.pause(0.1)
 
+torch.save(net, 'net.pkl') # entire net
+torch.save(net.state_dict(), 'net_params.pkl')
 plt.ioff()
 plt.show()

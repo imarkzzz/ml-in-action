@@ -3,7 +3,7 @@ from torch.autograd import Variable
 
 # import matplotlib.pyplot as plt
 
-# torch.manual_seed(1) # reproducible
+torch.manual_seed(1) # reproducible
 
 n_data = torch.ones(100, 2)
 x0 = torch.normal(2*n_data, 1) # class0 x data (tensor), shape=(100, 2)
