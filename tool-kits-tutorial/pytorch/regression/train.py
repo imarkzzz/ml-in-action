@@ -29,7 +29,12 @@ def train():
             plt.plot(x.data.numpy(), prediction.data.numpy(), 'r-', lw=5)
             plt.text(0.5, 0, 'Loss=%.4f' % loss.data[0], fontdict={'size': 20, 'color':  'red'})
             plt.pause(0.1)
-            
+
+    torch.save(net, 'net.pkl') # entire net
+    torch.save(net.state_dict(), 'net_params.pkl')        
+    plt.ioff()
+    plt.show()
+    
 def main():
     train()
 
