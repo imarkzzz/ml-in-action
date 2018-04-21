@@ -1,4 +1,4 @@
-from search_engine import Bloomfilter, major_segments, segments, Splunk
+from search_engine import Bloomfilter, major_segments, segments, Splunk, SplunkX
 
 
 def test_bloom_filter():
@@ -40,13 +40,28 @@ def test_splunk():
   print('-')
   for event in s.search('src_ip'):
     print(event)
-  
+
+def test_splunkx():
+  s = SplunkX()
+  s.add_event('src_ip = 1.2.3.4')
+  s.add_event('src_ip = 5.6.7.8')
+  s.add_event('dst_ip = 1.2.3.4')
+  s.add_event('src_ip = 1.2.7.8')
+
+  for event in s.search_all(['src_ip', '5.6.7']):
+    print(event)
+  print('-')
+
+  for event in s.search_any(['src_ip', 'dst_ip']):
+    print(event)
+  print('-')
   
 def main():
   # test_bloom_filter()
   # test_major_segments()
   # test_segments()
-  test_splunk()
+  # test_splunk()
+  test_splunkx()
 
 if __name__ == '__main__':
   main()
