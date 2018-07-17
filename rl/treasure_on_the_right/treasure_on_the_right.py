@@ -57,13 +57,13 @@ def update_env(S, episode, step_counter):
     env_list = ['-']*(N_STATES-1) + ['T']
     if S == 'terminal':
         interaction = 'Episode %s: total_steps = %s' % (episode + 1, step_counter)
-        print '\r{}'.format(interaction),
+        print('\r{}'.format(interaction), end='')
         time.sleep(2)
-        print '\r                                ',
+        print('\r                                ', end='')
     else:
         env_list[S] = 'o'
         interaction = ''.join(env_list)
-        print '\r{}'.format(interaction),
+        print('\r{}'.format(interaction), end='')
         time.sleep(FRESH_TIME)
 
 def random_policy():
@@ -83,7 +83,7 @@ def random_policy():
             step_counter += 1
         avg_step += step_counter
     avg_step /= MAX_EPISODES * 1.0
-    print 'avg_step: %s' % avg_step
+    print('avg_step: %s' % avg_step)
 
 def rl_q_learning():
     avg_step = 0
@@ -108,7 +108,7 @@ def rl_q_learning():
             step_counter += 1
         avg_step += step_counter
     avg_step /= MAX_EPISODES * 1.0
-    print 'avg_step: %s' % avg_step
+    print('avg_step: %s' % avg_step)
     return q_table
 
 def rl_sarsa():
@@ -136,7 +136,7 @@ def rl_sarsa():
             step_counter += 1
         avg_step += step_counter
     avg_step /= MAX_EPISODES * 1.0
-    print 'avg_step: %s' % avg_step
+    print('avg_step: %s' % avg_step)
     return q_table
 
 def rl_sarsa_lambda():
@@ -180,18 +180,18 @@ def rl_sarsa_lambda():
             step_counter += 1
         avg_step += step_counter
     avg_step /= MAX_EPISODES * 1.0
-    print 'avg_step: %s' % avg_step
+    print('avg_step: %s' % avg_step)
     return q_table
 
 if __name__ == '__main__':
-    print "random policy:"
+    print("random policy:")
     random_policy()
-    print "q-learning:"
+    print("q-learning:")
     q_table_q_learning = rl_q_learning()
-    print q_table_q_learning
-    print "sarsa:"
+    print(q_table_q_learning)
+    print("sarsa:")
     q_table_sarsa = rl_sarsa()
-    print q_table_sarsa
-    print "sara lambda:"
+    print(q_table_sarsa)
+    print("sara lambda:")
     q_table_sarsa_lambda = rl_sarsa_lambda()
-    print q_table_sarsa_lambda
+    print(q_table_sarsa_lambda)
