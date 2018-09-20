@@ -211,3 +211,62 @@ class CorpusSet(object):
         self.local_bi.add_key_value(int(_id), _word.strip())
     self.V = len(self.local_bi)
     return
+
+
+class LdaBase(CorpusSet):
+  """
+  LDA模型的基类
+  article下标范围[0, self.M), 下标为m
+  wordid下标范围[0, self.V), 下标为w
+  topic下标范围[0, self.K), 下标为k或topic
+  article中word下标范围[0, article.size()), 下标为n
+  """
+  def __init__(self):
+    """
+    初始化函数
+    """
+    CorpusSet.__init__(self)
+
+    self.dir_path = ""
+    self.model_name = ""
+    self.current_iter = 0
+    self.iters_num = 0
+    self.topics_num = 0
+    self.K = 0
+    self.twords_num = 0
+
+    self.alpha = np.zeros(self.K)
+    self.beta = np.zeros(self.V)
+
+    self.Z = []
+
+    self.nd = np.zeros((self.M, self.K))
+    self.ndsum = np.zeros((self.M, 1))
+    self.nw = np.zeros((self.K, self.V))
+    self.nwsum = np.zeros((self.K, 1))
+
+    self.theta = np.zeros((self.M, self.K))
+    self.phi = np.zeros((self.K, self.V))
+
+    self.sum_alphs = 0.0
+    self.sum_beta = 0.0
+
+    self.prior_word = defaultdict(list)
+
+    self.train_model = None
+    return
+
+def init_statistics_document(self):
+  """
+  初始化关于article的统计计数。先决条件:self.M, self.K, self.Z
+  """
+  assert self.M > 0 and self.K > 0 and self.Z
+
+  self.nd = np.zeros((self.M, self.K), dtype=np.int)
+  self.ndsum = np.zeros((self.M, 1), dtype=np.int)
+
+  for m in range(self.M):
+    for k in self.Z[m]:
+      self.nd[m, k] += 1
+    self.ndsum[m, 0] = len(self.Z[m])
+  return
