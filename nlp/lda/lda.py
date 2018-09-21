@@ -248,7 +248,7 @@ class LdaBase(CorpusSet):
     self.theta = np.zeros((self.M, self.K))
     self.phi = np.zeros((self.K, self.V))
 
-    self.sum_alphs = 0.0
+    self.sum_alpha = 0.0
     self.sum_beta = 0.0
 
     self.prior_word = defaultdict(list)
@@ -270,3 +270,163 @@ def init_statistics_document(self):
       self.nd[m, k] += 1
     self.ndsum[m, 0] = len(self.Z[m])
   return
+
+def init_statistics_word(self):
+  """
+  初始化关于word的统计计数。先决条件: self.V, self.K, self.Z, self.arts_Z
+  """
+  assert self.V > 0 and self.K > 0 and self.Z and self.arts_Z
+
+  self.nw = np.zeros((self.K, self.V), dtype=np.int)
+  self.nwsum = np.zeros((self.K, 1), dtype=np.int)
+
+  for m in range(self.M):
+    for k, w in zip(self.Z[m], self.arts_Z[m]):
+      self.nw[k, w] += 1
+      self.nwsum[k, 0] += 1
+  
+  return
+
+def init_statistics(self):
+  """
+  初始化全部的统计计数。上两个函数的综合函数。
+  """
+  self.init_statistics_document()
+  self.init_statistics_word()
+  return
+
+def sum_alpha_beta(self):
+  """
+  计算alpha、beta的和
+  """
+  self.sum_alpha = self.alpha.sum()
+  self.sum_beta = self.beta.sum()
+  return
+
+def calculate_theta(self):
+  """
+  初始化并计算模型的theta值(M*K)，用到alpha值
+  """
+  assert self.sum_alpha > 0
+  self.theta = (self.nd + self.alpha) / (self.ndsum + self.sum_alpha)
+  return
+
+def calculate_phi(self):
+  """
+  初始化并计算模型的phi值(K*V)，用到beta值
+  """
+  assert self.sum_beta > 0
+  self.phi = (self.nw + self.beta) / (self.nwsum + self.sum_beta)
+  return
+
+def calculate_perplexity(self):
+  """
+  计算Perplexity值，并返回
+  """
+  self.calculate_theta()
+  self.calculate_phi()
+
+  perplexity = 0.0
+  for m in range(self.M):
+    for w in self.arts_Z[m]:
+      perplexity += np.log(np.sum(self.theta[m] * self.phi[:, w]))
+
+  return np.exp(-(perplexity / self.words_count))
+
+def multinomial_sample(pro_list):
+  """
+  静态函数，多项式分布抽样，此时会改变pro_list的值
+  """
+  for k in range(1, len(pro_list)):
+    pro_list[k] += pro_list[k-1]
+  
+  u = np.random.rand() * pro_list[-1]
+
+  return_index = len(pro_list) - 1
+  for t in range(len(pro_list)):
+    if pro_list[t] > u:
+      return_index = t
+      break
+  
+  return return_index
+
+def gibbs_sampling(self, is_calculate_perplexity):
+  """
+  LDA模型中的Gibbs抽样过程
+  :param is_calculate_perplexity: 是否计算perplexity值
+  """
+  pp_list = []
+  pp_var = np.inf
+
+  last_iter = self.current_iter + 1
+  iters_num = self.iters_num if self.iters_num != "auto" else MAX_ITER_NUM
+  for self.current_iter in range(last_iter, last_iter + iters_num):
+    info = "......"
+
+    if is_calculate_perplexity:
+      pp = self.calculate_perplexity()
+      pp_list.append(pp)
+
+      pp_var = np.var(pp_list[-VAR_NUM:]) if len(pp_list) >= VAR_NUM else np.inf
+      info = (", perplexity: " + str(pp)) + ((", var: " + str(pp_var)) if len(pp_list) >= VAR_NUM else ""))
+    
+    logging.debug("\titerration " + str(self.current_iter) + info)
+
+    if self.iters_num == "auto" and pp_var < (VAR_NUM / 2):
+      break
+    
+    for m in range(self.M):
+      for n in range(len(self.Z[m])):
+        w = self.arts_Z[m][n]
+        k = self.Z[m][n]
+
+        self.nd[m, k] -= 1
+        self.ndsum[m, 0] -= 1
+        self.nw[k, w] -= 1
+        self.nwsum[k, 0] -= 1
+
+        if self.prior_word and (w in self.prior_word):
+          k = np.random.choice(self.prior_word[w])
+        else:
+          theta_p = (self.nd[m] + self.alpha) / (self.ndsum[m, 0] + self.sum_alpha)
+
+          if self.local_2_global and self.train_model:
+            w_g = self.local_2_global[w]
+            phi_p = (self.train_model.nw[:, w_g] + self.nw[:, w] + self.beta[w_g]) / \
+                    (self.train_model.nwsum[:, 0] + self.nwsum[, 0] + self.sum_beta)
+          else:
+            phi_p = (self.nw[, w] + self.beta[w]) / (self.nwsum[:, 0] + self.sum_beta)
+
+          multi_p = theta_p * phi_p
+          k = LdaBase.multinomial_sample(multi_p)
+
+        self.nd[m, k] += 1
+        self.ndsum[m, 0] += 1
+        self.nw[k, w] += 1
+        self.nwsum[k, 0] += 1
+
+        self.Z[m][n] = k
+
+    return
+
+  def save_parameter(self, file_name):
+    """
+    保存模型相关参数数据，包括：
+    topics_num:
+    M:
+    V:
+    K:
+    V:
+    words_count:
+    alpha:
+    beta:
+    """
+    with open(file_name, "w", encoding="utf-8") as f_param:
+      for item in ["topics_num", "M", "V", "words_count"]:
+        f_param.write("%s\t%s\n") (item, str(self.__dict__[item]))
+      f_param.write("alpha\t%s\n" % ",".join([str(item) for item in self.alpha]))
+      f_param.write("beta\t%s\n" % ",".join([str(item) for item in self.beta]))
+    return
+  
+  def load_parameter(self, file_name):
+    pass
