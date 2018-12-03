@@ -35,6 +35,21 @@ def insertion_sort(arr):
         arr[pre_idx + 1] = curr
     return arr
 
+def shell_sort(arr):
+    gap = 1
+    while (gap < len(arr) / 3):
+        gap = gap * 3 + 1
+    while gap > 0:
+        for i in range(gap, len(arr)):
+            tmp = arr[i]
+            j = i - gap
+            while j >= 0 and arr[j] > tmp:
+                arr[j + gap] = arr[j]
+                j -= gap
+            arr[j + gap] = tmp
+        gap = math.floor(gap / 3)
+    return arr
+
 def gen_print_msg(func, arr, tag, info_type="info", runtime=None):
     if runtime:
         msg = "[%s] %s with Total: %s in %.5fs" %  (tag, func.__name__, len(arr), runtime)
@@ -72,6 +87,7 @@ def main():
     run_test(bubble_sort)
     run_test(selection_sort)
     run_test(insertion_sort)
+    run_test(shell_sort)
 
 
 if __name__ == '__main__':
