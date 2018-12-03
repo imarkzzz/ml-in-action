@@ -61,9 +61,16 @@ def run_test(func, total=100):
     end_time = time.clock()
     runtime = end_time - start_time
     gen_print_msg(func, arr_cp, "Sorted list", info_type="result")
+    if operator.eq(arr, arr_cp):
+        gen_print_msg(func, arr_cp, "Sucesss", runtime=runtime)
+        return True
+    else:
+        gen_print_msg(func, arr_cp, "Fail", runtime=runtime)
+        return False
 
 def main():
     run_test(bubble_sort)
+
 
 if __name__ == '__main__':
     main()
