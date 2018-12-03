@@ -70,6 +70,8 @@ def run_test(func, total=100):
 
 def main():
     run_test(bubble_sort)
+    run_test(selection_sort)
+    run_test(insertion_sort)
 
 
 if __name__ == '__main__':
