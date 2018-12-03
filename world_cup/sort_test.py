@@ -70,6 +70,30 @@ def merge_sort(arr):
     left, right = arr[0:mid], arr[mid:]
     return merge(merge_sort(left), merge_sort(right))
 
+def swap(arr, i, j):
+    arr[i], arr[j] = arr[j], arr[i]
+
+def partition(arr, left, right):
+    pivot = left
+    idx = pivot + 1
+    i = idx
+    while i <= right:
+        if arr[i] < arr[pivot]:
+            swap(arr, i, idx)
+            idx += 1
+        i += 1
+    swap(arr, pivot, idx - 1)
+    return idx - 1
+
+def quick_sort(arr, left=None, right=None):
+    left = 0 if not isinstance(left, (int, float)) else left
+    right = len(arr) - 1 if not isinstance(right, (int, float)) else right
+    if left < right:
+        partition_idx = partition(arr, left, right)
+        quick_sort(arr, left, partition_idx - 1)
+        quick_sort(arr, partition_idx + 1, right)
+    return arr
+            
 def gen_print_msg(func, arr, tag, info_type="info", runtime=None):
     if runtime:
         msg = "[%s] %s with Total: %s in %.5fs" %  (tag, func.__name__, len(arr), runtime)
@@ -109,6 +133,7 @@ def main():
     run_test(insertion_sort)
     run_test(shell_sort)
     run_test(merge_sort)
+    run_test(quick_sort)
 
 
 if __name__ == '__main__':
