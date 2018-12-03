@@ -50,6 +50,26 @@ def shell_sort(arr):
         gap = math.floor(gap / 3)
     return arr
 
+def merge(left, right):
+    result = []
+    while left and right:
+        if left[0] <= right[0]:
+            result.append(left.pop(0))
+        else:
+            result.append(right.pop(0))
+    while left:
+        result.append(left.pop(0))
+    while right:
+        result.append(right.pop(0))
+    return result
+
+def merge_sort(arr):
+    if len(arr) < 2:
+        return arr
+    mid = math.floor(len(arr) / 2)
+    left, right = arr[0:mid], arr[mid:]
+    return merge(merge_sort(left), merge_sort(right))
+
 def gen_print_msg(func, arr, tag, info_type="info", runtime=None):
     if runtime:
         msg = "[%s] %s with Total: %s in %.5fs" %  (tag, func.__name__, len(arr), runtime)
@@ -88,6 +108,7 @@ def main():
     run_test(selection_sort)
     run_test(insertion_sort)
     run_test(shell_sort)
+    run_test(merge_sort)
 
 
 if __name__ == '__main__':
