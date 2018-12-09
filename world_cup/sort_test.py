@@ -93,7 +93,34 @@ def quick_sort(arr, left=None, right=None):
         quick_sort(arr, left, partition_idx - 1)
         quick_sort(arr, partition_idx + 1, right)
     return arr
-            
+
+def heapify(arr, i, arr_len):
+    left = 2 * i + 1
+    right = 2 * i + 2
+    largest = i
+    if left < arr_len and arr[left] > arr[largest]:
+        largest = left
+    if right < arr_len and arr[right] > arr[largest]:
+        largest = right
+    
+    if largest != i:
+        swap(arr, i, largest)
+        heapify(arr,  largest, arr_len)
+
+def build_max_heap(arr):
+    arr_len = len(arr)
+    for i in range(math.floor(arr_len / 2), -1, -1):
+        heapify(arr, i, arr_len)
+
+def heap_sort(arr):
+    build_max_heap(arr)
+    arr_len = len(arr)
+    for i in range(arr_len - 1, 0, -1):
+        swap(arr, 0, i)
+        arr_len -= 1
+        heapify(arr, 0, arr_len)
+    return arr
+
 def gen_print_msg(func, arr, tag, info_type="info", runtime=None):
     if runtime:
         msg = "[%s] %s with Total: %s in %.5fs" %  (tag, func.__name__, len(arr), runtime)
@@ -134,6 +161,7 @@ def main():
     run_test(shell_sort)
     run_test(merge_sort)
     run_test(quick_sort)
+    run_test(heap_sort)
 
 
 if __name__ == '__main__':
