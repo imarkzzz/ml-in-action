@@ -4,6 +4,7 @@ import operator
 import math
 import time
 
+
 def bubble_sort(arr):
     for i in range(1, len(arr)):
         for j in range(0, len(arr) - i):
@@ -35,6 +36,7 @@ def insertion_sort(arr):
         arr[pre_idx + 1] = curr
     return arr
 
+
 def shell_sort(arr):
     gap = 1
     while (gap < len(arr) / 3):
@@ -50,6 +52,7 @@ def shell_sort(arr):
         gap = math.floor(gap / 3)
     return arr
 
+
 def merge(left, right):
     result = []
     while left and right:
@@ -63,6 +66,7 @@ def merge(left, right):
         result.append(right.pop(0))
     return result
 
+
 def merge_sort(arr):
     if len(arr) < 2:
         return arr
@@ -70,8 +74,10 @@ def merge_sort(arr):
     left, right = arr[0:mid], arr[mid:]
     return merge(merge_sort(left), merge_sort(right))
 
+
 def swap(arr, i, j):
     arr[i], arr[j] = arr[j], arr[i]
+
 
 def partition(arr, left, right):
     pivot = left
@@ -85,6 +91,7 @@ def partition(arr, left, right):
     swap(arr, pivot, idx - 1)
     return idx - 1
 
+
 def quick_sort(arr, left=None, right=None):
     left = 0 if not isinstance(left, (int, float)) else left
     right = len(arr) - 1 if not isinstance(right, (int, float)) else right
@@ -93,7 +100,59 @@ def quick_sort(arr, left=None, right=None):
         quick_sort(arr, left, partition_idx - 1)
         quick_sort(arr, partition_idx + 1, right)
     return arr
-            
+
+
+def heapify(arr, i, arr_len):
+    left = 2 * i + 1
+    right = 2 * i + 2
+    largest = i
+    if left < arr_len and arr[left] > arr[largest]:
+        largest = left
+    if right < arr_len and arr[right] > arr[largest]:
+        largest = right
+    
+    if largest != i:
+        swap(arr, i, largest)
+        heapify(arr,  largest, arr_len)
+
+
+def build_max_heap(arr):
+    arr_len = len(arr)
+    for i in range(math.floor(arr_len / 2), -1, -1):
+        heapify(arr, i, arr_len)
+
+
+def heap_sort(arr):
+    build_max_heap(arr)
+    arr_len = len(arr)
+    for i in range(arr_len - 1, 0, -1):
+        swap(arr, 0, i)
+        arr_len -= 1
+        heapify(arr, 0, arr_len)
+    return arr
+
+
+def counting_sort(arr, max_val=None):
+    if max_val:
+        bucket_len = max_val + 1
+    else:
+        bucket_len = max(arr)
+    bucket = [0] * bucket_len
+    sorted_idx = 0
+    arr_len = len(arr)
+    for i in range(arr_len):
+        if not bucket[arr[i]]:
+            bucket[arr[i]] = 0
+        bucket[arr[i]] += 1
+    for j in range(bucket_len):
+        while bucket[j] > 0:
+            arr[sorted_idx] = j
+            sorted_idx += 1
+            bucket[j] += 1
+            bucket[j] -= 1
+    return arr
+    
+
 def gen_print_msg(func, arr, tag, info_type="info", runtime=None):
     if runtime:
         msg = "[%s] %s with Total: %s in %.5fs" %  (tag, func.__name__, len(arr), runtime)
@@ -107,6 +166,7 @@ def gen_print_msg(func, arr, tag, info_type="info", runtime=None):
             arr_print = ""
         msg = "%s [%s]%s, Use %s with Total: %s" % (type_flag, tag, arr_print, func.__name__, len(arr))
     print(msg)
+
 
 def run_test(func, total=100):
     arr = [i for i in range(-math.floor(total / 2), math.ceil(total / 2))]
@@ -127,6 +187,7 @@ def run_test(func, total=100):
         gen_print_msg(func, arr_cp, "Fail", runtime=runtime)
         return False
 
+
 def main():
     run_test(bubble_sort)
     run_test(selection_sort)
@@ -134,6 +195,7 @@ def main():
     run_test(shell_sort)
     run_test(merge_sort)
     run_test(quick_sort)
+    run_test(heap_sort)
 
 
 if __name__ == '__main__':
