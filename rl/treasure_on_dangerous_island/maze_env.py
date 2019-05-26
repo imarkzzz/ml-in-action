@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Filename: maze_env.py
-Function:
-Author: zhangzhengzhang@sunlands.com
-Create: 2018/2/27 19:43
 
-"""
 import numpy as np
 import time
 import sys

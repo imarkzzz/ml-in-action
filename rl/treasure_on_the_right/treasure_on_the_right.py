@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Filename: treasure_on_the_right.py
-Function:
-Author: zhangzhengzhang@sunlands.com
-Create: 2018/2/26 15:11
 
-"""
 import numpy as np
 import pandas as pd
 import time

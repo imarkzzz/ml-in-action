@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Filename: run_this.py
-Function:
-Author: zhangzhengzhang@sunlands.com
-Create: 2018/2/27 14:01
 
-"""
 import os
 import time
 import numpy as np
