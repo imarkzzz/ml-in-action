@@ -11,18 +11,27 @@ def build_q_table(n_states, n_actions):
     return table
 
 def random_policy():
+    N_ACTIONS = 4
     env = Maze()
-    env.reset()
-    env.render()
-    done = False
-    rewards = []
-    while not done:
-        action_name = np.random.choice(env.n_actions)
-        state, reward, done, info = env.step(action_name)
-        rewards.append(reward)
+
+    def choose_action():
+        action_name = np.random.choice(N_ACTIONS)
+        return action_name
+
+    for episode in range(200):
+        step_counter = 0
+        done = False
+        S = env.reset()
         env.render()
-        time.sleep(0.3)
-    env.mainloop()
+        while not done:
+            A = choose_action()
+            S_, R, done, info = env.step(A)
+            env.render()
+            step_counter += 1
+            time.sleep(0.3)
+        interaction = 'Episode %s: total_steps = %s, got = %s' % (episode + 1, step_counter, R)
+        print(interaction)
+        time.sleep(1)
 
 
 def qlearning():
@@ -119,6 +128,6 @@ def sarsa():
         print(interaction)
         time.sleep(1)
 
-# random_policy()
-qlearning()
+random_policy()
+# qlearning()
 # sarsa()
