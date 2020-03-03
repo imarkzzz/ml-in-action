@@ -10,8 +10,8 @@ else:
 
 
 UNIT = 40   # pixels
-MAZE_H = 4  # grid height
-MAZE_W = 4  # grid width
+MAZE_H = 6  # grid height
+MAZE_W = 6  # grid width
 
 
 class Maze(tk.Tk, object):
@@ -38,27 +38,27 @@ class Maze(tk.Tk, object):
 
         # create origin
         origin = np.array([20, 20])
-        #
-        # # hell
-        # hell1_center = origin + np.array([UNIT * 2, UNIT])
-        # self.hell1 = self.canvas.create_rectangle(
-        #     hell1_center[0] - 15, hell1_center[1] - 15,
-        #     hell1_center[0] + 15, hell1_center[1] + 15,
-        #     fill='black')
-        # # hell
-        # hell2_center = origin + np.array([UNIT, UNIT * 2])
-        # self.hell2 = self.canvas.create_rectangle(
-        #     hell2_center[0] - 15, hell2_center[1] - 15,
-        #     hell2_center[0] + 15, hell2_center[1] + 15,
-        #     fill='black')
-        #
-        # # create oval
-        # oval_center = origin + UNIT * 2
-        # self.oval = self.canvas.create_oval(
-        #     oval_center[0] - 15, oval_center[1] - 15,
-        #     oval_center[0] + 15, oval_center[1] + 15,
-        #     fill='yellow')
-        #
+
+        # hell
+        hell1_center = origin + np.array([UNIT * 2, UNIT])
+        self.hell1 = self.canvas.create_rectangle(
+            hell1_center[0] - 15, hell1_center[1] - 15,
+            hell1_center[0] + 15, hell1_center[1] + 15,
+            fill='black')
+        # hell
+        hell2_center = origin + np.array([UNIT, UNIT * 3])
+        self.hell2 = self.canvas.create_rectangle(
+            hell2_center[0] - 15, hell2_center[1] - 15,
+            hell2_center[0] + 15, hell2_center[1] + 15,
+            fill='black')
+
+        # create oval
+        oval_center = origin + np.array([UNIT * 4, UNIT * 4])
+        self.oval = self.canvas.create_oval(
+            oval_center[0] - 15, oval_center[1] - 15,
+            oval_center[0] + 15, oval_center[1] + 15,
+            fill='yellow')
+
         # create red rect
         self.rect = self.canvas.create_rectangle(
             origin[0] - 15, origin[1] - 15,
@@ -112,14 +112,16 @@ class Maze(tk.Tk, object):
         else:
             reward = 0
             done = False
-
-        return s_, reward, done
+        info = ''
+        return s_, reward, done, info
 
     def render(self):
         time.sleep(0.05)
         self.update()
 
-env = Maze()
-env.reset()
-env.render()
-env.mainloop()
+
+if __name__ == '__main__':
+    env = Maze()
+    env.reset()
+    env.render()
+    env.mainloop()
