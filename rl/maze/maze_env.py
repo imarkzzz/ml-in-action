@@ -10,9 +10,9 @@ UNIT = 40   # pixels
 MAZE_H = 4  # grid height
 MAZE_W = 4  # grid width
 
-RECT_POSE = (0, 1)
+DOG_POSE = (0, 1)
 HELL_POSES = [(2, 1), (1, 2), (1, 3)]
-OVAL_POSE = (3, 3)
+FOOD_POSE = (3, 3)
 
 
 class Maze(tk.Tk, object):
@@ -51,7 +51,7 @@ class Maze(tk.Tk, object):
             self.hells.append(hell)
 
         # create oval
-        x, y = OVAL_POSE
+        x, y = FOOD_POSE
         oval_center = origin + np.array([UNIT * x, UNIT * y])
         self.oval = self.canvas.create_oval(
             oval_center[0] - 15, oval_center[1] - 15,
@@ -59,7 +59,7 @@ class Maze(tk.Tk, object):
             fill='yellow')
 
         # create red rect
-        x, y = RECT_POSE
+        x, y = DOG_POSE
         rect_center = origin + np.array([UNIT * x, UNIT * y])
         self.rect = self.canvas.create_rectangle(
             rect_center[0] - 15, rect_center[1] - 15,
@@ -74,7 +74,7 @@ class Maze(tk.Tk, object):
         time.sleep(0.5)
         self.canvas.delete(self.rect)
         origin = np.array([20, 20])
-        x, y = RECT_POSE
+        x, y = DOG_POSE
         rect_center = origin + np.array([UNIT * x, UNIT * y])
         self.rect = self.canvas.create_rectangle(
             rect_center[0] - 15, rect_center[1] - 15,
