@@ -39,6 +39,7 @@ class Maze(tk.Tk, object):
 
         # create origin
         origin = np.array([20, 20])
+        self.origin = origin
 
         # hell
         self.hells = []
@@ -59,27 +60,25 @@ class Maze(tk.Tk, object):
             fill='yellow')
 
         # create red rect
+        self._make_dog()
+
+        # pack all
+        self.canvas.pack()
+
+    def _make_dog(self):
+        origin = self.origin
         x, y = DOG_POSE
         rect_center = origin + np.array([UNIT * x, UNIT * y])
         self.rect = self.canvas.create_rectangle(
             rect_center[0] - 15, rect_center[1] - 15,
             rect_center[0] + 15, rect_center[1] + 15,
             fill='red')
-
-        # pack all
-        self.canvas.pack()
 
     def reset(self):
         self.update()
         time.sleep(0.5)
         self.canvas.delete(self.rect)
-        origin = np.array([20, 20])
-        x, y = DOG_POSE
-        rect_center = origin + np.array([UNIT * x, UNIT * y])
-        self.rect = self.canvas.create_rectangle(
-            rect_center[0] - 15, rect_center[1] - 15,
-            rect_center[0] + 15, rect_center[1] + 15,
-            fill='red')
+        self._make_dog()
         # return observation
         return self.canvas.coords(self.rect)
 
