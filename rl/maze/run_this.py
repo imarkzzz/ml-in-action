@@ -38,35 +38,33 @@ def sarsa():
         else:
             action_name = state_actions.idxmax()
         return action_name
-    for episode in range(200):
-        step_counter = 0
-        done = False
-        S = env.reset()
-        env.render()
+
+    def S2idx(S):
         S_key = str(S)
         if S_key in s_dict:
             S_idx = s_dict[S_key]
         else:
             S_idx = len(s_dict)
             s_dict[S_key] = S_idx
+        return S_idx
+
+    for episode in range(200):
+        step_counter = 0
+        done = False
+        S = env.reset()
         env.render()
-        A_ = choose_action(S_idx, q_table)
+        env.render()
+        A_ = choose_action(S2idx(S), q_table)
         A = A_
         while not done:
            S_, R, done, info = env.step(A)
-           q_predict = q_table.loc[S_idx, A]
-           S_key_ = str(S_)
-           if S_key_ in s_dict:
-               S_idx_ = s_dict[S_key_]
-           else:
-               S_idx_ = len(s_dict)
-               s_dict[S_key_] = S_idx_
+           q_predict = q_table.loc[S2idx(S), A]
            if done:
                q_targe = R
            else:
-               A_ = choose_action(S_idx_, q_table)
-               q_targe = R + 0.9 * q_table.loc[S_idx_, A_]
-           q_table.loc[S_idx, A] += 0.1 * (q_targe - q_predict)
+               A_ = choose_action(S2idx(S_), q_table)
+               q_targe = R + 0.9 * q_table.loc[S2idx(S_), A_]
+           q_table.loc[S2idx(S_), A] += 0.1 * (q_targe - q_predict)
            S = S_
            A = A_
            env.render()
