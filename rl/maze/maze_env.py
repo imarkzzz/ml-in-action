@@ -19,8 +19,11 @@ HELL_POSES = [
 FOOD_POSE = (3, 3)
 
 MAP_CONFIG = {
-    "maze_h": 6,
-    "maze_w": 5,
+    "maze_h": MAZE_H,
+    "maze_w": MAZE_W,
+    "dog_pos": DOG_POSE,
+    "hell_poses": HELL_POSES,
+    "food_pos": FOOD_POSE
 }
 
 
@@ -38,6 +41,9 @@ class Maze(tk.Tk, object):
     def load_map(self, map_config):
         self.maze_h = map_config["maze_h"]
         self.maze_w = map_config["maze_w"]
+        self.dog_pos = map_config["dog_pos"]
+        self.hell_poses = map_config["hell_poses"]
+        self.food_pos = map_config["food_pos"]
 
     def _build_maze(self):
         self.canvas = tk.Canvas(self, bg='white',
@@ -58,7 +64,7 @@ class Maze(tk.Tk, object):
 
         # hell
         self.hells = []
-        for x, y in HELL_POSES:
+        for x, y in self.hell_poses:
             hell_center = origin + np.array([UNIT * x, UNIT * y])
             hell = self.canvas.create_rectangle(
                 hell_center[0] - 15, hell_center[1] - 15,
@@ -67,7 +73,7 @@ class Maze(tk.Tk, object):
             self.hells.append(hell)
 
         # create oval
-        x, y = FOOD_POSE
+        x, y = self.food_pos
         oval_center = origin + np.array([UNIT * x, UNIT * y])
         self.oval = self.canvas.create_oval(
             oval_center[0] - 15, oval_center[1] - 15,
@@ -82,7 +88,7 @@ class Maze(tk.Tk, object):
 
     def _make_dog(self):
         origin = self.origin
-        x, y = DOG_POSE
+        x, y = self.dog_pos
         rect_center = origin + np.array([UNIT * x, UNIT * y])
         self.rect = self.canvas.create_rectangle(
             rect_center[0] - 15, rect_center[1] - 15,
