@@ -7,8 +7,8 @@ import tkinter as tk
 
 
 UNIT = 40   # pixels
-MAZE_H = 4  # grid height
-MAZE_W = 4  # grid width
+MAZE_H = 6  # grid height
+MAZE_W = 5  # grid width
 
 DOG_POSE = (0, 1)
 HELL_POSES = [
@@ -26,7 +26,7 @@ class Maze(tk.Tk, object):
         self.n_actions = len(self.action_space)
         self.n_states = MAZE_H * MAZE_W
         self.title('maze')
-        self.geometry('{0}x{1}'.format(MAZE_H * UNIT, MAZE_H * UNIT))
+        # self.geometry('{0}x{1}'.format(MAZE_H * UNIT, MAZE_W * UNIT))
         self._build_maze()
 
     def _build_maze(self):
@@ -39,7 +39,7 @@ class Maze(tk.Tk, object):
             x0, y0, x1, y1 = c, 0, c, MAZE_H * UNIT
             self.canvas.create_line(x0, y0, x1, y1)
         for r in range(0, MAZE_H * UNIT, UNIT):
-            x0, y0, x1, y1 = 0, r, MAZE_H * UNIT, r
+            x0, y0, x1, y1 = 0, r, MAZE_W * UNIT, r
             self.canvas.create_line(x0, y0, x1, y1)
 
         # create origin
