@@ -32,6 +32,7 @@ def random_policy():
         while not done:
             A = choose_action()
             S_, R, done, info = env.step(A)
+            S_ = S_["dog_pos"]
             env.render()
             step_counter += 1
             time.sleep(0.3)
@@ -67,10 +68,12 @@ def qlearning():
         step_counter = 0
         done = False
         S = env.reset()
+        S = S["dog_pos"]
         env.render()
         while not done:
             A = choose_action(S2idx(S), q_table)
             S_, R, done, info = env.step(A)
+            S_ = S_["dog_pos"]
             q_predict = q_table.loc[S2idx(S), A]
             if done:
                 q_targe = R
@@ -113,11 +116,13 @@ def sarsa():
         step_counter = 0
         done = False
         S = env.reset()
+        S = S["dog_pos"]
         env.render()
         A_ = choose_action(S2idx(S), q_table)
         A = A_
         while not done:
            S_, R, done, info = env.step(A)
+           S_ = S_["dog_pos"]
            q_predict = q_table.loc[S2idx(S), A]
            if done:
                q_targe = R
@@ -176,6 +181,7 @@ def qlearning2():
         step_counter = 0
         done = False
         S = env.reset()
+        S = S["dog_pos"]
         env.render()
         A_pre = None
         while not done:
@@ -230,11 +236,13 @@ def sarsa_lambda():
         step_counter = 0
         done = False
         S = env.reset()
+        S = S["dog_pos"]
         env.render()
         A_ = choose_action(S2idx(S), q_table)
         A = A_
         while not done:
             S_, R, done, info = env.step(A)
+            S_ = S_["dog_pos"]
             q_predict = q_table.loc[S2idx(S), A]
             if done:
                 q_targe = R
@@ -251,6 +259,7 @@ def sarsa_lambda():
             env.render()
             step_counter += 1
             time.sleep(0.3)
+        print(s_dict)
         interaction = 'Episode %s: total_steps = %s, got = %s' % (episode + 1, step_counter, R)
         print(interaction)
         time.sleep(1)
@@ -260,5 +269,5 @@ def sarsa_lambda():
 # qlearning()
 # sarsa()
 
-# qlearning2()
-sarsa_lambda()
+qlearning2()
+# sarsa_lambda()
