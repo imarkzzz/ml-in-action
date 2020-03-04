@@ -17,6 +17,17 @@ def build_q_table(n_states, n_actions):
     )
     return table
 
+
+def S2idx(s_dict, S):
+    S_key = str(S)
+    if S_key in s_dict:
+        S_idx = s_dict[S_key]
+    else:
+        S_idx = len(s_dict)
+        s_dict[S_key] = S_idx
+    return S_idx
+
+
 def random_policy():
     env = Maze()
 
@@ -55,15 +66,6 @@ def qlearning():
             action_name = state_actions.idxmax()
         return action_name
 
-    def S2idx(S):
-        S_key = str(S)
-        if S_key in s_dict:
-            S_idx = s_dict[S_key]
-        else:
-            S_idx = len(s_dict)
-            s_dict[S_key] = S_idx
-        return S_idx
-
     for episode in range(200):
         step_counter = 0
         done = False
@@ -71,15 +73,15 @@ def qlearning():
         S = S["dog_pos"]
         env.render()
         while not done:
-            A = choose_action(S2idx(S), q_table)
+            A = choose_action(S2idx(s_dict, S), q_table)
             S_, R, done, info = env.step(A)
             S_ = S_["dog_pos"]
-            q_predict = q_table.loc[S2idx(S), A]
+            q_predict = q_table.loc[S2idx(s_dict, S), A]
             if done:
                 q_targe = R
             else:
-                q_targe = R + 0.9 * q_table.loc[S2idx(S_), :].max()
-            q_table.loc[S2idx(S), A] += 0.1 * (q_targe - q_predict)
+                q_targe = R + 0.9 * q_table.loc[S2idx(s_dict, S_), :].max()
+            q_table.loc[S2idx(s_dict, S), A] += 0.1 * (q_targe - q_predict)
             S = S_
             env.render()
             step_counter += 1
@@ -103,33 +105,24 @@ def sarsa():
             action_name = state_actions.idxmax()
         return action_name
 
-    def S2idx(S):
-        S_key = str(S)
-        if S_key in s_dict:
-            S_idx = s_dict[S_key]
-        else:
-            S_idx = len(s_dict)
-            s_dict[S_key] = S_idx
-        return S_idx
-
     for episode in range(200):
         step_counter = 0
         done = False
         S = env.reset()
         S = S["dog_pos"]
         env.render()
-        A_ = choose_action(S2idx(S), q_table)
+        A_ = choose_action(S2idx(s_dict, S), q_table)
         A = A_
         while not done:
            S_, R, done, info = env.step(A)
            S_ = S_["dog_pos"]
-           q_predict = q_table.loc[S2idx(S), A]
+           q_predict = q_table.loc[S2idx(s_dict, S), A]
            if done:
                q_targe = R
            else:
-               A_ = choose_action(S2idx(S_), q_table)
-               q_targe = R + 0.9 * q_table.loc[S2idx(S_), A_]
-           q_table.loc[S2idx(S_), A] += 0.1 * (q_targe - q_predict)
+               A_ = choose_action(S2idx(s_dict, S_), q_table)
+               q_targe = R + 0.9 * q_table.loc[S2idx(s_dict, S_), A_]
+           q_table.loc[S2idx(s_dict, S_), A] += 0.1 * (q_targe - q_predict)
            S = S_
            A = A_
            env.render()
@@ -154,15 +147,6 @@ def qlearning2():
             action_name = state_actions.idxmax()
         return action_name
 
-    def S2idx(S):
-        S_key = str(S)
-        if S_key in s_dict:
-            S_idx = s_dict[S_key]
-        else:
-            S_idx = len(s_dict)
-            s_dict[S_key] = S_idx
-        return S_idx
-
     def check_hesitation(A, A_pre):
         action_space = env.action_space
         act_A = action_space[A]
@@ -185,9 +169,9 @@ def qlearning2():
         env.render()
         A_pre = None
         while not done:
-            A = choose_action(S2idx(S), q_table)
+            A = choose_action(S2idx(s_dict, S), q_table)
             S_, R, done, info = env.step(A)
-            q_predict = q_table.loc[S2idx(S), A]
+            q_predict = q_table.loc[S2idx(s_dict, S), A]
             if not A_pre:
                 A_pre = A
             if check_hesitation(A, A_pre):
@@ -196,8 +180,8 @@ def qlearning2():
             if done:
                 q_targe = R
             else:
-                q_targe = R + 0.9 * q_table.loc[S2idx(S_), :].max()
-            q_table.loc[S2idx(S), A] += 0.1 * (q_targe - q_predict)
+                q_targe = R + 0.9 * q_table.loc[S2idx(s_dict, S_), :].max()
+            q_table.loc[S2idx(s_dict, S), A] += 0.1 * (q_targe - q_predict)
             S = S_
             env.render()
             step_counter += 1
@@ -208,6 +192,14 @@ def qlearning2():
 
 
 def sarsa_lambda():
+    # map_cfg = {
+    #     "maze_h": 1,
+    #     "maze_w": 5,
+    #     "dog_pos": (0, 0),
+    #     "hell_poses": [],
+    #     "food_pos": (4, 0)
+    # }
+    # env = Maze(map_cfg)
     env = Maze()
     s_dict = {}
     q_table = build_q_table(env.n_spaces, env.n_actions)
@@ -221,15 +213,6 @@ def sarsa_lambda():
             action_name = state_actions.idxmax()
         return action_name
 
-    def S2idx(S):
-        S_key = str(S)
-        if S_key in s_dict:
-            S_idx = s_dict[S_key]
-        else:
-            S_idx = len(s_dict)
-            s_dict[S_key] = S_idx
-        return S_idx
-
     eligibility_trace = q_table.copy()
     for episode in range(MAX_EPISODES):
         eligibility_trace *= 0
@@ -238,20 +221,20 @@ def sarsa_lambda():
         S = env.reset()
         S = S["dog_pos"]
         env.render()
-        A_ = choose_action(S2idx(S), q_table)
+        A_ = choose_action(S2idx(s_dict, S), q_table)
         A = A_
         while not done:
             S_, R, done, info = env.step(A)
             S_ = S_["dog_pos"]
-            q_predict = q_table.loc[S2idx(S), A]
+            q_predict = q_table.loc[S2idx(s_dict,S), A]
             if done:
                 q_targe = R
             else:
-                A_ = choose_action(S2idx(S_), q_table)
-                q_targe = R + GAMMA * q_table.loc[S2idx(S_), A_]
+                A_ = choose_action(S2idx(s_dict, S_), q_table)
+                q_targe = R + GAMMA * q_table.loc[S2idx(s_dict, S_), A_]
             error = (q_targe - q_predict)
-            eligibility_trace.loc[S2idx(S), :] *= 0
-            eligibility_trace.loc[S2idx(S), A] = 1
+            eligibility_trace.loc[S2idx(s_dict, S), :] *= 0
+            eligibility_trace.loc[S2idx(s_dict, S), A] = 1
             q_table += ALPHA * error * eligibility_trace
             eligibility_trace *= GAMMA * ALPHA
             S = S_
@@ -269,5 +252,5 @@ def sarsa_lambda():
 # qlearning()
 # sarsa()
 
-qlearning2()
-# sarsa_lambda()
+# qlearning2()
+sarsa_lambda()
