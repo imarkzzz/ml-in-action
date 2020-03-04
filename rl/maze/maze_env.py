@@ -32,21 +32,28 @@ class Maze(tk.Tk, object):
         super(Maze, self).__init__()
         self.action_space = ['u', 'd', 'l', 'r']
         self.n_actions = len(self.action_space)
-        self.load_map(map_config)
+        self.map_config = self.load_map(map_config)
         self.n_spaces = self.maze_h * self.maze_w
         self.title('maze')
         # self.geometry('{0}x{1}'.format(MAZE_H * UNIT, MAZE_W * UNIT))
         self._build_maze()
 
-    def load_map(self, map_config):
+    def load_map(self, map_config=None):
         self.map_states = MAP_CONFIG.copy()
         if map_config:
             self.map_states.update(map_config)
         self.maze_h = self.map_states["maze_h"]
         self.maze_w = self.map_states["maze_w"]
-        self.dog_pos = self.map_states["dog_pos"]
-        self.hell_poses = self.map_states["hell_poses"]
-        self.food_pos = self.map_states["food_pos"]
+
+        self.dog_pos = np.array(self.map_states["dog_pos"])
+        self.map_states["dog_pos"] = self.dog_pos
+
+        self.hell_poses = [np.array(pos) for pos in self.map_states["hell_poses"]]
+        self.map_states["hell_poses"] = self.hell_poses
+
+        self.food_pos = np.array(self.map_states["food_pos"])
+        self.map_states["food_pos"] =  self.food_pos
+        return map_config
 
     def _build_maze(self):
         self.canvas = tk.Canvas(self, bg='white',
@@ -98,13 +105,20 @@ class Maze(tk.Tk, object):
             rect_center[0] + 15, rect_center[1] + 15,
             fill='red')
 
+    def _move_dog(self, move_step):
+        move_size = move_step * UNIT
+        self.canvas.move(self.rect, move_size[0], move_size[1])
+        self.dog_pos += move_step
+        self.map_states["dog_pos"] = self.dog_pos
+
     def reset(self):
         self.update()
         time.sleep(0.5)
+        self.load_map(self.map_config)
         self.canvas.delete(self.rect)
         self._make_dog()
         # return observation
-        return self.canvas.coords(self.rect)
+        return self.map_states["dog_pos"]
 
     def step(self, action):
         s = self.canvas.coords(self.rect)
@@ -112,41 +126,43 @@ class Maze(tk.Tk, object):
         reward = 0
         if action == 0:   # up
             if s[1] > UNIT:
-                move_step[1] -= UNIT
+                move_step[1] -= 1
             else:
                 reward = -1
         elif action == 1:   # down
             if s[1] < (self.maze_h - 1) * UNIT:
-                move_step[1] += UNIT
+                move_step[1] += 1
             else:
                 reward = -1
         elif action == 2:   # right
             if s[0] < (self.maze_w - 1) * UNIT:
-                move_step[0] += UNIT
+                move_step[0] += 1
             else:
                 reward = -1
         elif action == 3:   # left
             if s[0] > UNIT:
-                move_step[0] -= UNIT
+                move_step[0] -= 1
             else:
                 reward = -1
 
-        self.canvas.move(self.rect, move_step[0], move_step[1])  # move agent
+        # self.canvas.move(self.rect, move_step[0], move_step[1])  # move agent
+        self._move_dog(move_step) # move agent
 
         s_ = self.canvas.coords(self.rect)  # next state
 
         # reward function
+        info = ''
         if s_ == self.canvas.coords(self.oval):
             reward = 10
             done = True
-            s_ = 'terminal'
+            info = "Win"
         elif s_ in [self.canvas.coords(hell) for hell in self.hells]:
             reward = -1
             done = True
-            s_ = 'terminal'
+            info = "Lose"
         else:
             done = False
-        info = ''
+        s_ = self.map_states["dog_pos"]
         return s_, reward, done, info
 
     def render(self):
