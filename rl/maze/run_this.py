@@ -194,8 +194,66 @@ def qlearning2():
         print(interaction)
         time.sleep(1)
 
+
+def sarsa_lambda():
+    q_table = build_q_table(16, 4)
+    N_ACTIONS = 4
+    s_dict = {}
+    env = Maze()
+
+    def choose_action(state, q_table):
+        state_actions = q_table.iloc[state, :]
+        # exploration and exploitation trade-off
+        if (np.random.uniform() > 0.9) or ((state_actions == 0).all()):
+            action_name = np.random.choice(N_ACTIONS)
+        else:
+            action_name = state_actions.idxmax()
+        return action_name
+
+    def S2idx(S):
+        S_key = str(S)
+        if S_key in s_dict:
+            S_idx = s_dict[S_key]
+        else:
+            S_idx = len(s_dict)
+            s_dict[S_key] = S_idx
+        return S_idx
+
+    eligibility_trace = q_table.copy()
+    for episode in range(200):
+        eligibility_trace *= 0
+        step_counter = 0
+        done = False
+        S = env.reset()
+        env.render()
+        A_ = choose_action(S2idx(S), q_table)
+        A = A_
+        while not done:
+            S_, R, done, info = env.step(A)
+            q_predict = q_table.loc[S2idx(S), A]
+            if done:
+                q_targe = R
+            else:
+                A_ = choose_action(S2idx(S_), q_table)
+                q_targe = R + 0.9 * q_table.loc[S2idx(S_), A_]
+            error = (q_targe - q_predict)
+            eligibility_trace.loc[S2idx(S), :] *= 0
+            eligibility_trace.loc[S2idx(S), A] = 1
+            q_table += 0.1 * error * eligibility_trace
+            eligibility_trace *= 0.9 * 0.1
+            S = S_
+            A = A_
+            env.render()
+            step_counter += 1
+            time.sleep(0.3)
+        interaction = 'Episode %s: total_steps = %s, got = %s' % (episode + 1, step_counter, R)
+        print(interaction)
+        time.sleep(1)
+
+
 # random_policy()
 # qlearning()
 # sarsa()
 
-qlearning2()
+# qlearning2()
+sarsa_lambda()
