@@ -117,7 +117,7 @@ class Maze(tk.Tk, object):
         self.canvas.delete(self.rect)
         self._make_dog()
         # return observation
-        return self.map_states["dog_pos"]
+        return self.map_states
 
     def step(self, action):
         s = self.canvas.coords(self.rect)
@@ -161,7 +161,7 @@ class Maze(tk.Tk, object):
             info = "Lose"
         else:
             done = False
-        s_ = self.map_states["dog_pos"]
+        s_ = self.map_states
         return s_, reward, done, info
 
     def render(self):
