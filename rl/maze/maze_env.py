@@ -59,7 +59,7 @@ class Maze(tk.Tk, object):
             self.canvas.create_line(x0, y0, x1, y1)
 
         # create origin
-        origin = np.array([20, 20])
+        origin = np.array([UNIT, UNIT]) / 2
         self.origin = origin
 
         # hell
