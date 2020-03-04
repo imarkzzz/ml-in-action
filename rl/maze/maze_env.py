@@ -10,7 +10,7 @@ UNIT = 40   # pixels
 MAZE_H = 6  # grid height
 MAZE_W = 5  # grid width
 
-DOG_POSE = (0, 1)
+DOG_POSE = (0, 0)
 HELL_POSES = [
     (2, 1),
     (1, 2),
@@ -170,7 +170,14 @@ class Maze(tk.Tk, object):
 
 
 if __name__ == '__main__':
-    env = Maze()
+    map_cfg = {
+        "maze_h": 1,
+        "maze_w": 5,
+        "dog_pos": (0, 0),
+        "hell_poses": [],
+        "food_pos": (4, 0)
+    }
+    env = Maze(map_cfg)
     env.reset()
     env.render()
     env.mainloop()
