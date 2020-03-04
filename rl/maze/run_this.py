@@ -3,6 +3,13 @@ import numpy as np
 import time
 from maze.maze_env import Maze
 
+
+EPSILON = 0.9
+ALPHA = 0.1
+GAMMA = 0.9
+MAX_EPISODES = 200
+
+
 def build_q_table(n_states, n_actions):
     table = pd.DataFrame(
         np.zeros((n_states, n_actions)),
@@ -220,7 +227,7 @@ def sarsa_lambda():
         return S_idx
 
     eligibility_trace = q_table.copy()
-    for episode in range(200):
+    for episode in range(MAX_EPISODES):
         eligibility_trace *= 0
         step_counter = 0
         done = False
@@ -235,12 +242,12 @@ def sarsa_lambda():
                 q_targe = R
             else:
                 A_ = choose_action(S2idx(S_), q_table)
-                q_targe = R + 0.9 * q_table.loc[S2idx(S_), A_]
+                q_targe = R + GAMMA * q_table.loc[S2idx(S_), A_]
             error = (q_targe - q_predict)
             eligibility_trace.loc[S2idx(S), :] *= 0
             eligibility_trace.loc[S2idx(S), A] = 1
-            q_table += 0.1 * error * eligibility_trace
-            eligibility_trace *= 0.9 * 0.1
+            q_table += ALPHA * error * eligibility_trace
+            eligibility_trace *= GAMMA * ALPHA
             S = S_
             A = A_
             env.render()
