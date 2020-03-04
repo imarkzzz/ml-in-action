@@ -18,28 +18,38 @@ HELL_POSES = [
 ]
 FOOD_POSE = (3, 3)
 
+MAP_CONFIG = {
+    "maze_h": 6,
+    "maze_w": 5,
+}
+
 
 class Maze(tk.Tk, object):
     def __init__(self):
         super(Maze, self).__init__()
         self.action_space = ['u', 'd', 'l', 'r']
         self.n_actions = len(self.action_space)
-        self.n_states = MAZE_H * MAZE_W
+        self.load_map(MAP_CONFIG)
+        self.n_states = self.maze_h * self.maze_w
         self.title('maze')
         # self.geometry('{0}x{1}'.format(MAZE_H * UNIT, MAZE_W * UNIT))
         self._build_maze()
 
+    def load_map(self, map_config):
+        self.maze_h = map_config["maze_h"]
+        self.maze_w = map_config["maze_w"]
+
     def _build_maze(self):
         self.canvas = tk.Canvas(self, bg='white',
-                           height=MAZE_H * UNIT,
-                           width=MAZE_W * UNIT)
+                           height=self.maze_h * UNIT,
+                           width=self.maze_w * UNIT)
 
         # create grids
-        for c in range(0, MAZE_W * UNIT, UNIT):
-            x0, y0, x1, y1 = c, 0, c, MAZE_H * UNIT
+        for c in range(0, self.maze_w * UNIT, UNIT):
+            x0, y0, x1, y1 = c, 0, c, self.maze_h * UNIT
             self.canvas.create_line(x0, y0, x1, y1)
-        for r in range(0, MAZE_H * UNIT, UNIT):
-            x0, y0, x1, y1 = 0, r, MAZE_W * UNIT, r
+        for r in range(0, self.maze_h * UNIT, UNIT):
+            x0, y0, x1, y1 = 0, r, self.maze_w * UNIT, r
             self.canvas.create_line(x0, y0, x1, y1)
 
         # create origin
@@ -97,12 +107,12 @@ class Maze(tk.Tk, object):
             else:
                 reward = -1
         elif action == 1:   # down
-            if s[1] < (MAZE_H - 1) * UNIT:
+            if s[1] < (self.maze_h - 1) * UNIT:
                 base_action[1] += UNIT
             else:
                 reward = -1
         elif action == 2:   # right
-            if s[0] < (MAZE_W - 1) * UNIT:
+            if s[0] < (self.maze_w - 1) * UNIT:
                 base_action[0] += UNIT
             else:
                 reward = -1
