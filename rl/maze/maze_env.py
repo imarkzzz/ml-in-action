@@ -33,7 +33,7 @@ class Maze(tk.Tk, object):
         self.action_space = ['u', 'd', 'l', 'r']
         self.n_actions = len(self.action_space)
         self.load_map(map_config)
-        self.n_states = self.maze_h * self.maze_w
+        self.n_spaces = self.maze_h * self.maze_w
         self.title('maze')
         # self.geometry('{0}x{1}'.format(MAZE_H * UNIT, MAZE_W * UNIT))
         self._build_maze()

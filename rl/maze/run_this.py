@@ -43,7 +43,7 @@ def random_policy():
 def qlearning():
     env = Maze()
     s_dict = {}
-    q_table = build_q_table(env.n_states, env.n_actions)
+    q_table = build_q_table(env.n_spaces, env.n_actions)
 
     def choose_action(state, q_table):
         state_actions = q_table.iloc[state, :]
@@ -89,7 +89,7 @@ def qlearning():
 def sarsa():
     env = Maze()
     s_dict = {}
-    q_table = build_q_table(env.n_states, env.n_actions)
+    q_table = build_q_table(env.n_spaces, env.n_actions)
 
     def choose_action(state, q_table):
         state_actions = q_table.iloc[state, :]
@@ -138,7 +138,7 @@ def sarsa():
 def qlearning2():
     env = Maze()
     s_dict = {}
-    q_table = build_q_table(env.n_states, env.n_actions)
+    q_table = build_q_table(env.n_spaces, env.n_actions)
 
     def choose_action(state, q_table):
         state_actions = q_table.iloc[state, :]
@@ -204,7 +204,7 @@ def qlearning2():
 def sarsa_lambda():
     env = Maze()
     s_dict = {}
-    q_table = build_q_table(env.n_states, env.n_actions)
+    q_table = build_q_table(env.n_spaces, env.n_actions)
 
     def choose_action(state, q_table):
         state_actions = q_table.iloc[state, :]
