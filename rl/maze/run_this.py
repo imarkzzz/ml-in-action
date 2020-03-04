@@ -18,11 +18,10 @@ def build_q_table(n_states, n_actions):
     return table
 
 def random_policy():
-    N_ACTIONS = 4
     env = Maze()
 
     def choose_action():
-        action_name = np.random.choice(N_ACTIONS)
+        action_name = np.random.choice(env.n_actions)
         return action_name
 
     for episode in range(200):
@@ -42,15 +41,15 @@ def random_policy():
 
 
 def qlearning():
-    q_table = build_q_table(16, 4)
-    N_ACTIONS = 4
-    s_dict = {}
     env = Maze()
+    s_dict = {}
+    q_table = build_q_table(env.n_states, env.n_actions)
+
     def choose_action(state, q_table):
         state_actions = q_table.iloc[state, :]
         # exploration and exploitation trade-off
         if (np.random.uniform() > 0.9) or ((state_actions == 0).all()):
-            action_name = np.random.choice(N_ACTIONS)
+            action_name = np.random.choice(env.n_actions)
         else:
             action_name = state_actions.idxmax()
         return action_name
@@ -88,15 +87,15 @@ def qlearning():
 
 
 def sarsa():
-    q_table = build_q_table(16, 4)
-    N_ACTIONS = 4
-    s_dict = {}
     env = Maze()
+    s_dict = {}
+    q_table = build_q_table(env.n_states, env.n_actions)
+
     def choose_action(state, q_table):
         state_actions = q_table.iloc[state, :]
         # exploration and exploitation trade-off
         if (np.random.uniform() > 0.9) or ((state_actions == 0).all()):
-            action_name = np.random.choice(N_ACTIONS)
+            action_name = np.random.choice(env.n_actions)
         else:
             action_name = state_actions.idxmax()
         return action_name
@@ -137,15 +136,15 @@ def sarsa():
 
 
 def qlearning2():
-    q_table = build_q_table(16, 4)
-    N_ACTIONS = 4
-    s_dict = {}
     env = Maze()
+    s_dict = {}
+    q_table = build_q_table(env.n_states, env.n_actions)
+
     def choose_action(state, q_table):
         state_actions = q_table.iloc[state, :]
         # exploration and exploitation trade-off
         if (np.random.uniform() > 0.9) or ((state_actions == 0).all()):
-            action_name = np.random.choice(N_ACTIONS)
+            action_name = np.random.choice(env.n_actions)
         else:
             action_name = state_actions.idxmax()
         return action_name
@@ -203,16 +202,15 @@ def qlearning2():
 
 
 def sarsa_lambda():
-    q_table = build_q_table(16, 4)
-    N_ACTIONS = 4
-    s_dict = {}
     env = Maze()
+    s_dict = {}
+    q_table = build_q_table(env.n_states, env.n_actions)
 
     def choose_action(state, q_table):
         state_actions = q_table.iloc[state, :]
         # exploration and exploitation trade-off
         if (np.random.uniform() > 0.9) or ((state_actions == 0).all()):
-            action_name = np.random.choice(N_ACTIONS)
+            action_name = np.random.choice(env.n_actions)
         else:
             action_name = state_actions.idxmax()
         return action_name
