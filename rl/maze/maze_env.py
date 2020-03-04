@@ -13,10 +13,10 @@ MAZE_W = 4  # grid width
 DOG_POSE = (0, 1)
 HELL_POSES = [
     (2, 1),
-    # (1, 2),
-    # (1, 3)
+    (1, 2),
+    (1, 3)
 ]
-FOOD_POSE = (1, 2)
+FOOD_POSE = (3, 3)
 
 
 class Maze(tk.Tk, object):
