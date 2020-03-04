@@ -28,22 +28,25 @@ MAP_CONFIG = {
 
 
 class Maze(tk.Tk, object):
-    def __init__(self):
+    def __init__(self, map_config=None):
         super(Maze, self).__init__()
         self.action_space = ['u', 'd', 'l', 'r']
         self.n_actions = len(self.action_space)
-        self.load_map(MAP_CONFIG)
+        self.load_map(map_config)
         self.n_states = self.maze_h * self.maze_w
         self.title('maze')
         # self.geometry('{0}x{1}'.format(MAZE_H * UNIT, MAZE_W * UNIT))
         self._build_maze()
 
     def load_map(self, map_config):
-        self.maze_h = map_config["maze_h"]
-        self.maze_w = map_config["maze_w"]
-        self.dog_pos = map_config["dog_pos"]
-        self.hell_poses = map_config["hell_poses"]
-        self.food_pos = map_config["food_pos"]
+        self.map_states = MAP_CONFIG.copy()
+        if map_config:
+            self.map_states.update(map_config)
+        self.maze_h = self.map_states["maze_h"]
+        self.maze_w = self.map_states["maze_w"]
+        self.dog_pos = self.map_states["dog_pos"]
+        self.hell_poses = self.map_states["hell_poses"]
+        self.food_pos = self.map_states["food_pos"]
 
     def _build_maze(self):
         self.canvas = tk.Canvas(self, bg='white',
