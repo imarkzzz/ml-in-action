@@ -1,0 +1,9 @@
+{
+  "maze_h": 1,
+  "maze_w": 5,
+  "dog_pos": [0, 0],
+  "hell_poses": [
+
+  ],
+  "food_pos": [4, 0]
+}
