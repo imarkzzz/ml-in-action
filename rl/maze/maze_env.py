@@ -107,7 +107,7 @@ class Maze(tk.Tk, object):
 
     def _move_dog(self, move_step):
         move_size = move_step * UNIT
-        self.canvas.move(self.rect, move_size[0], move_size[1])
+        self.canvas.move(self.rect, move_size[0], move_size[1]) # move agent
         self.dog_pos += move_step
 
     def reset(self):
@@ -144,7 +144,6 @@ class Maze(tk.Tk, object):
             else:
                 reward = -1
 
-        # self.canvas.move(self.rect, move_step[0], move_step[1])  # move agent
         self._move_dog(move_step) # move agent
 
         s_ = self.canvas.coords(self.rect)  # next state
