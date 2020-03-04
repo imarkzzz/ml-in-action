@@ -109,7 +109,6 @@ class Maze(tk.Tk, object):
         move_size = move_step * UNIT
         self.canvas.move(self.rect, move_size[0], move_size[1])
         self.dog_pos += move_step
-        self.map_states["dog_pos"] = self.dog_pos
 
     def reset(self):
         self.update()
