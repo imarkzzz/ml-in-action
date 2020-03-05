@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import time
-import sys
 import tkinter as tk
 
 
 UNIT = 40   # pixels
-MAZE_H = 6  # grid height
-MAZE_W = 5  # grid width
+MAZE_H = 4  # grid height
+MAZE_W = 4  # grid width
 
 DOG_POSE = (0, 0)
 HELL_POSES = [
     (2, 1),
-    (1, 2),
-    (1, 3)
+    # (1, 2),
+    # (1, 3)
 ]
 FOOD_POSE = (3, 3)
 
@@ -112,7 +110,6 @@ class Maze(tk.Tk, object):
 
     def reset(self):
         self.update()
-        time.sleep(0.5)
         self.load_map(self.map_config)
         self.canvas.delete(self.rect)
         self._make_dog()
