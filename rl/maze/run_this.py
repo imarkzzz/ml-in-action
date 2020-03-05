@@ -45,10 +45,8 @@ def random_policy():
             S_, R, done, info = env.step(A)
             env.render()
             step_counter += 1
-            time.sleep(0.3)
         interaction = 'Episode %s: total_steps = %s, got = %s' % (episode + 1, step_counter, R)
         print(interaction)
-        time.sleep(1)
 
 
 def qlearning():
@@ -84,10 +82,8 @@ def qlearning():
             S = S_
             env.render()
             step_counter += 1
-            time.sleep(0.3)
         interaction = 'Episode %s: total_steps = %s, got = %s' % (episode + 1, step_counter, R)
         print(interaction)
-        time.sleep(1)
 
 
 def sarsa():
@@ -126,10 +122,8 @@ def sarsa():
            A = A_
            env.render()
            step_counter += 1
-           time.sleep(0.3)
         interaction = 'Episode %s: total_steps = %s, got = %s' % (episode + 1, step_counter, R)
         print(interaction)
-        time.sleep(1)
 
 
 def qlearning2():
@@ -184,10 +178,8 @@ def qlearning2():
             S = S_
             env.render()
             step_counter += 1
-            time.sleep(0.3)
         interaction = 'Episode %s: total_steps = %s, got = %s' % (episode + 1, step_counter, R)
         print(interaction)
-        time.sleep(1)
 
 
 def sarsa_lambda():
