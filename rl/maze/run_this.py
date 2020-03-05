@@ -35,7 +35,7 @@ def random_policy():
         action_name = np.random.choice(env.n_actions)
         return action_name
 
-    for episode in range(200):
+    for episode in range(MAX_EPISODES):
         step_counter = 0
         done = False
         S = env.reset()
@@ -63,16 +63,14 @@ def qlearning():
             action_name = state_actions.idxmax()
         return action_name
 
-    for episode in range(200):
+    for episode in range(MAX_EPISODES):
         step_counter = 0
         done = False
         S = env.reset()
-        
         env.render()
         while not done:
             A = choose_action(S2idx(s_dict, S), q_table)
             S_, R, done, info = env.step(A)
-            
             q_predict = q_table.loc[S2idx(s_dict, S), A]
             if done:
                 q_targe = R
@@ -100,17 +98,15 @@ def sarsa():
             action_name = state_actions.idxmax()
         return action_name
 
-    for episode in range(200):
+    for episode in range(MAX_EPISODES):
         step_counter = 0
         done = False
         S = env.reset()
-        
         env.render()
         A_ = choose_action(S2idx(s_dict, S), q_table)
         A = A_
         while not done:
            S_, R, done, info = env.step(A)
-           
            q_predict = q_table.loc[S2idx(s_dict, S), A]
            if done:
                q_targe = R
@@ -154,11 +150,10 @@ def qlearning2():
             return True
         return False
 
-    for episode in range(200):
+    for episode in range(MAX_EPISODES):
         step_counter = 0
         done = False
         S = env.reset()
-        
         env.render()
         A_pre = None
         while not done:
