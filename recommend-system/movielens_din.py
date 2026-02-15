@@ -35,7 +35,7 @@ class Config:
     batch_size = 256
     lr = 0.001
     epochs = 10
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'mps')
     seed = 42
 
 # 设置随机种子
@@ -50,29 +50,22 @@ setup_seed(Config.seed)
 
 # ===================== 2. 数据预处理 =====================
 class MovieLensDataset(Dataset):
-    def __init__(self, data, user2seq, movie_ids, max_seq_len):
-        self.data = data
-        self.user2seq = user2seq
-        self.movie_ids = movie_ids
+    def __init__(self, df, max_seq_len):
+        self.df = df.reset_index(drop=True)
         self.max_seq_len = max_seq_len
-        self.movie_set = set(movie_ids)
-    
+
     def __len__(self):
-        return len(self.data)
-    
+        return len(self.df)
+
     def __getitem__(self, idx):
-        row = self.data.iloc[idx]
+        row = self.df.iloc[idx]
         user_id = row['user_id']
         target_movie = row['movie_id']
-        label = row['rating']  # 回归任务，也可转为分类
-        
-        # 获取用户行为序列并截断/补零
-        seq = self.user2seq.get(user_id, [])
+        label = row['rating']
+        seq = row.get('seq', [])
         seq = seq[-self.max_seq_len:] if len(seq) > self.max_seq_len else seq
         seq_len = len(seq)
-        # 补零（0作为padding标识）
         seq = seq + [0] * (self.max_seq_len - seq_len)
-        
         return {
             'user_id': torch.tensor(user_id, dtype=torch.long),
             'target_movie': torch.tensor(target_movie, dtype=torch.long),
@@ -117,7 +110,6 @@ def preprocess_data():
     
     # 优化序列构建逻辑，避免空序列
     for user_id, group in ratings.groupby('user_id'):
-        seq = []
         # 转换为列表操作，提升效率
         movie_list = group['movie_id'].tolist()
         # 为每个位置构建序列（当前位置之前的所有电影）
@@ -129,33 +121,23 @@ def preprocess_data():
         return user2seq.get((row['user_id'], row['movie_id']), [])
     
     ratings['seq'] = ratings.apply(get_seq, axis=1)
-    
-    # 过滤掉序列为空的数据（可选，避免无行为序列的样本）
+
+    # 过滤掉序列为空的数据（可选）
     ratings = ratings[ratings['seq'].apply(len) > 0].reset_index(drop=True)
-    
-    # 重建user2seq为{user_id: 所有历史序列}（适配Dataset）
-    user2seq_final = {}
-    for user_id, group in ratings.groupby('user_id'):
-        # 取该用户最后一次行为的完整序列作为代表
-        user2seq_final[user_id] = group['seq'].tolist()[-1]
-    
-    # 划分训练/测试集
+
+    # 不再构建 user2seq_final 为最后一次序列，直接使用每条记录的 seq
     train_data = ratings.sample(frac=0.8, random_state=Config.seed)
     test_data = ratings.drop(train_data.index)
-    
-    # 构建数据集
-    movie_ids = ratings['movie_id'].unique()
-    train_dataset = MovieLensDataset(train_data, user2seq_final, movie_ids, Config.max_seq_len)
-    test_dataset = MovieLensDataset(test_data, user2seq_final, movie_ids, Config.max_seq_len)
-    
-    # 构建DataLoader
+
+    train_dataset = MovieLensDataset(train_data, Config.max_seq_len)
+    test_dataset = MovieLensDataset(test_data, Config.max_seq_len)
+
     train_loader = DataLoader(train_dataset, batch_size=Config.batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=Config.batch_size, shuffle=False)
-    
-    # 统计维度
-    num_users = len(user_encoder.classes_) + 1  # +1 for padding
+
+    num_users = len(user_encoder.classes_) + 1
     num_movies = len(movie_encoder.classes_) + 1
-    
+
     return train_loader, test_loader, num_users, num_movies
 
 # ===================== 3. DIN模型实现 =====================
